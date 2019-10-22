@@ -1,0 +1,1 @@
+export type Gallery = "first-floor" | "cross-beam" | "coat-closet";
