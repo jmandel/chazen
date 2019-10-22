@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useRef } from "react";
 import { ActionTypes } from "./ActionTypes";
 import { AudioFragment } from "./AudioFragment";
 import { downloader, ItemProgress } from "./DownloadManager";
-import { frags as FragmentsToDownload } from "./FragmentsToDownload";
+import { FragmentsToDownload } from "./FragmentsToDownload";
 import PlaybackManager, { PlaybackRequest, PlaybackStatus } from "./PlaybackManager";
 
 const audioContext: AudioContext = new ((window as any).AudioContext ||
@@ -12,6 +12,7 @@ type AppState = {
   progress: ItemProgress<AudioFragment>[];
   audioContextStatus: string;
   playbackStatus: PlaybackStatus;
+  requestedIteration?: number;
 };
 
 const defaultAppState = {
@@ -22,7 +23,9 @@ const defaultAppState = {
 
 const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
   switch (action.type) {
-    case "beginPlayback":
+    case "requestIteration":
+      return { ...state, requestedIteration: action.iteration};
+     case "beginPlayback":
       return { ...state, audioContextStatus: audioContext.state };
     case "downloadStatus":
       return { ...state, progress: action.progress };
@@ -33,6 +36,8 @@ const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
   }
 };
 
+const PARALLEL_DOWNLOADS=3
+
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(appStateReducer, defaultAppState);
   const completed = state.progress.filter(p => p.finished).length;
@@ -40,12 +45,13 @@ const App: React.FC = () => {
 
   const dispatchPlaybackRequest = useRef((p: PlaybackRequest): void => {});
   useEffect(() => {
-    downloader(FragmentsToDownload, p =>
+    console.log("DL", FragmentsToDownload.length)
+    downloader(FragmentsToDownload, PARALLEL_DOWNLOADS, p =>
       dispatch({
         type: "downloadStatus",
         progress: p
       })
-    );
+    ); 
   }, []);
 
   useEffect(() => {
@@ -65,7 +71,6 @@ const App: React.FC = () => {
   }, [state.progress]);
 
   const startAudio = () => {
-    console.log("Starting audio", audioContext);
     audioContext.resume().then(() => {
       dispatch({ type: "beginPlayback" });
     });
@@ -73,28 +78,43 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <button onClick={() => startAudio()}>Begin Playback</button>
+      <div className="wrapper">
+      <header className="header">
+        <button className="begin" onClick={() => startAudio()}>Begin Playback</button>
+      </header>
         {state.audioContextStatus === "running" &&
-          FragmentsToDownload.map(f => (
-            <button
+          FragmentsToDownload.map((f,i) => (
+            <div className="iteration-box">
+            <img className={`iteration 
+              ${(f.iteration === state.playbackStatus.iteration) ? "playing" : ""}
+              ${(f.iteration === state.requestedIteration) ? "requested" : ""}
+              `} src="sitting.svg" style={{
+              gridArea: `iteration${Math.floor(i/3)}${i%3}`
+            }}
               key={f.iteration}
-              onClick={() =>
+              onClick={() => {
+                dispatch({type: "requestIteration", iteration: f.iteration})
                 dispatchPlaybackRequest.current({
                   type: "change-iteration",
                   iteration: f.iteration
                 })
+
+              }
               }>
-              {f.iteration}
-            </button>
+            </img>
+            </div>
           ))}
-        <pre>
-          {completed} of {total} files loaded.
-          {state.audioContextStatus}
-        </pre>
+        
         <br></br>
         <pre>{JSON.stringify(state.playbackStatus, null, 2)}</pre>
-      </header>
+      <footer className="footer">
+        <pre>
+          {completed} of {total} files loaded.  
+          {" " + state.audioContextStatus}. 
+          Chazen ＆ cetera. 2020.
+        </pre>
+        </footer>
+     </div> 
     </div>
   );
 };

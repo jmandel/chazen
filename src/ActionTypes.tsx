@@ -6,4 +6,5 @@ export type ActionTypes =
   | { type: "pickIteration"; selectedIteration: number }
   | { type: "pickTime"; subtype: "a"; selectedTime: number }
   | { type: "downloadStatus"; progress: ItemProgress<AudioFragment>[] }
-  | { type: "playbackStatus"; status: PlaybackStatus };
+  | { type: "playbackStatus"; status: PlaybackStatus }
+  | { type: "requestIteration"; iteration: number };

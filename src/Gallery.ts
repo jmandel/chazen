@@ -1,1 +1,3 @@
-export type Gallery = "first-floor" | "cross-beam" | "coat-closet";
+export const GalleryTypes = ["first-floor", "cross-beam", "coat-closet"] as const;
+
+export type Gallery = typeof GalleryTypes[number]

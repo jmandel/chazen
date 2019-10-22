@@ -11,15 +11,15 @@ const fetchNext: <T extends Downloadable>(
   progress: ItemProgress<T>[],
   cb: ProgressCallback<T>
 ) => void = (progress, cb) => {
-  const todo = progress.filter(p => !p.started);
-  if (todo.length) {
-    todo[0].started = true;
+  const remainingItems = progress.filter(p => !p.started);
+  if (remainingItems.length) {
+    remainingItems[0].started = true;
     cb(progress);
-    fetch(todo[0].target.url)
+    fetch(remainingItems[0].target.url)
       .then(r => r.arrayBuffer())
       .then(r => {
-        todo[0].finished = true;
-        todo[0].target.arrayBuffer = r;
+        remainingItems[0].finished = true;
+        remainingItems[0].target.arrayBuffer = r;
         cb([...progress]);
         fetchNext(progress, cb);
       });
@@ -28,15 +28,20 @@ const fetchNext: <T extends Downloadable>(
 
 type DownloaderType = <T extends Downloadable>(
   targets: T[],
+  inParallel: number,
+  // TODO add a "justInTime" flag and convery the  ".target.arrayBuffer" interface to async
+  // ... so that we can force pre-loading or allow for downloading on demand.
   cb: (p: ItemProgress<T>[]) => void
 ) => { status: () => ItemProgress<T>[] };
 
-export const downloader: DownloaderType = (targets, cb) => {
+export const downloader: DownloaderType = (targets, inParallel, cb) => {
   const progress = targets.map(t => ({
     started: false,
     finished: false,
     target: t,
   }));
+
+  Array(inParallel).fill(0).forEach(()=>fetchNext(progress, cb))
 
   let status = () => progress;
   const manager = {
