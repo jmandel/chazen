@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/chazen/static/css/main.110912bc.chunk.css",
-    "main.js": "/chazen/static/js/main.1acda20f.chunk.js",
-    "main.js.map": "/chazen/static/js/main.1acda20f.chunk.js.map",
+    "main.css": "/chazen/static/css/main.583588e5.chunk.css",
+    "main.js": "/chazen/static/js/main.570f707d.chunk.js",
+    "main.js.map": "/chazen/static/js/main.570f707d.chunk.js.map",
     "runtime-main.js": "/chazen/static/js/runtime-main.174cd17f.js",
     "runtime-main.js.map": "/chazen/static/js/runtime-main.174cd17f.js.map",
-    "static/js/2.29808824.chunk.js": "/chazen/static/js/2.29808824.chunk.js",
-    "static/js/2.29808824.chunk.js.map": "/chazen/static/js/2.29808824.chunk.js.map",
+    "static/js/2.4ec8e2a8.chunk.js": "/chazen/static/js/2.4ec8e2a8.chunk.js",
+    "static/js/2.4ec8e2a8.chunk.js.map": "/chazen/static/js/2.4ec8e2a8.chunk.js.map",
     "index.html": "/chazen/index.html",
-    "precache-manifest.20c71a7d10891b546b7edd8c6c6b3ca3.js": "/chazen/precache-manifest.20c71a7d10891b546b7edd8c6c6b3ca3.js",
+    "precache-manifest.a05000acddd5e6b502067f30c9bc99df.js": "/chazen/precache-manifest.a05000acddd5e6b502067f30c9bc99df.js",
     "service-worker.js": "/chazen/service-worker.js",
-    "static/css/main.110912bc.chunk.css.map": "/chazen/static/css/main.110912bc.chunk.css.map"
+    "static/css/main.583588e5.chunk.css.map": "/chazen/static/css/main.583588e5.chunk.css.map"
   },
   "entrypoints": [
     "static/js/runtime-main.174cd17f.js",
-    "static/js/2.29808824.chunk.js",
-    "static/css/main.110912bc.chunk.css",
-    "static/js/main.1acda20f.chunk.js"
+    "static/js/2.4ec8e2a8.chunk.js",
+    "static/css/main.583588e5.chunk.css",
+    "static/js/main.570f707d.chunk.js"
   ]
 }
