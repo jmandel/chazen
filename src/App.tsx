@@ -70,7 +70,7 @@ const App: React.FC = () => {
     [11, "sitting.04.png"],
     [12, "sitting.01.png"],
     [13, "sitting.02.png"],
-    [13, "sitting.03.png"],
+    [14, "sitting.03.png"],
     [15, "sitting.04.png"],
   ]
 
@@ -83,6 +83,8 @@ const App: React.FC = () => {
             <audio ref={audioElements[gallery]} preload="auto" controls src={`${Gallery[gallery]}.mp3`} className="begin" />
           ))}
         </header>
+        <div className="menu"></div>
+        <div className="gutter"></div>
         {iterationList.map(([i, icon], c) => {
           
           const src = `icon-${Gallery[state.gallery]}-${String(c).padStart(2, '0')}.svg`
@@ -138,7 +140,10 @@ const App: React.FC = () => {
               `}>{description}</button>
             ))}
           </div>
+          <div>
           Chazen et cetera. 2020.
+
+          </div>
         </footer>
       </div>
     </div>

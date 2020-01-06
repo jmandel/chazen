@@ -2,7 +2,7 @@
   "name": "sitting",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://joshuamandel.com/chazen",
+  "homepage": "https://chazen.breadpoets.org",
   "dependencies": {
     "@types/jest": "24.0.19",
     "@types/node": "12.11.1",
