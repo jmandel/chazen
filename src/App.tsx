@@ -1,120 +1,146 @@
 import React, { useEffect, useReducer, useRef } from "react";
-import { ActionTypes } from "./ActionTypes";
-import { AudioFragment } from "./AudioFragment";
-import { downloader, ItemProgress } from "./DownloadManager";
-import { FragmentsToDownload } from "./FragmentsToDownload";
-import PlaybackManager, { PlaybackRequest, PlaybackStatus } from "./PlaybackManager";
+import { ActionTypes, Gallery } from "./ActionTypes";
+import "./App.css"
 
 const audioContext: AudioContext = new ((window as any).AudioContext ||
   (window as any).webkitAudioContext)();
 
+
+const GalleryNames: [string, Gallery][] = [
+  ["Objects Study Room", Gallery.study],
+  ["Paige Court", Gallery.court],
+  ["Japanese Niche", Gallery.niche],
+  ["Bridge", Gallery.bridge],
+]
+
+const defaultGalleryParam = window.location.hash.slice(1);
+
+const defaultGallery: Gallery = Object.keys(Gallery).includes(defaultGalleryParam) ?
+  (Gallery as any)[defaultGalleryParam] : Gallery.niche;
+
 type AppState = {
-  progress: ItemProgress<AudioFragment>[];
-  audioContextStatus: string;
-  playbackStatus: PlaybackStatus;
-  requestedIteration?: number;
+  iteration: number;
+  gallery: Gallery
 };
 
-const defaultAppState = {
-  progress: [],
-  audioContextStatus: audioContext.state,
-  playbackStatus: {} as PlaybackStatus
+const defaultAppState: AppState = {
+  iteration: 0,
+  gallery: defaultGallery
 };
 
 const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
   switch (action.type) {
-    case "requestIteration":
-      return { ...state, requestedIteration: action.iteration};
-     case "beginPlayback":
-      return { ...state, audioContextStatus: audioContext.state };
-    case "downloadStatus":
-      return { ...state, progress: action.progress };
-    case "playbackStatus":
-      return { ...state, playbackStatus: action.status };
+    case "requestGallery":
+      return { ...state, gallery: action.gallery};
+     case "requestIteration":
+      return { ...state, iteration: action.iteration || 0 };
+    case "rollOverToIteration":
+      return { ...state, iteration: action.iteration || 0 };
     default:
       return state;
   }
 };
 
-const PARALLEL_DOWNLOADS=3
+const PARALLEL_DOWNLOADS = 3
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(appStateReducer, defaultAppState);
-  const completed = state.progress.filter(p => p.finished).length;
-  const total = state.progress.length;
 
-  const dispatchPlaybackRequest = useRef((p: PlaybackRequest): void => {});
-  useEffect(() => {
-    console.log("DL", FragmentsToDownload.length)
-    downloader(FragmentsToDownload, PARALLEL_DOWNLOADS, p =>
-      dispatch({
-        type: "downloadStatus",
-        progress: p
-      })
-    ); 
-  }, []);
-
-  useEffect(() => {
-    const finishedItems = state.progress.filter(p => p.finished).length 
-    if ( finishedItems < FragmentsToDownload.length)
-      return;
-
-    const allPlaybackFragments = state.progress.map(
-      (p: ItemProgress<AudioFragment>): AudioFragment => p.target
-    );
-
-    const pm = PlaybackManager(audioContext, allPlaybackFragments, status =>
-      dispatch({ type: "playbackStatus", status })
-    );
-
-    dispatchPlaybackRequest.current = pm.dispatch;
-  }, [state.progress]);
-
-  const startAudio = () => {
-    audioContext.resume().then(() => {
-      dispatch({ type: "beginPlayback" });
-    });
+  const audioElements: Record<Gallery, any> = {
+    [Gallery.study]: useRef<HTMLAudioElement>(null),
+    [Gallery.court]: useRef<HTMLAudioElement>(null),
+    [Gallery.niche]: useRef<HTMLAudioElement>(null),
+    [Gallery.bridge]: useRef<HTMLAudioElement>(null)
   };
 
+  const ITERATION_DURATION = 64.32 // 76;
+  const LOOKBACK_ON_SWITCH = 0;
+  const iterationList: [number, string][] = [
+    [0, "sitting.01.png"],
+    [1, "sitting.02.png"],
+    [2, "sitting.03.png"],
+    [3, "sitting.04.png"],
+    [4, "sitting.01.png"],
+    [5, "sitting.02.png"],
+    [6, "sitting.03.png"],
+    [7, "sitting.04.png"],
+    [8, "sitting.01.png"],
+    [9, "sitting.02.png"],
+    [10, "sitting.03.png"],
+    [11, "sitting.04.png"],
+    [12, "sitting.01.png"],
+    [13, "sitting.02.png"],
+    [13, "sitting.03.png"],
+    [15, "sitting.04.png"],
+  ]
+
+  // iteration_duration = 64.32s
   return (
     <div className="App">
       <div className="wrapper">
-      <header className="header">
-        <button className="begin" onClick={() => startAudio()}>Begin Playback</button>
-      </header>
-        {state.audioContextStatus === "running" &&
-          FragmentsToDownload.map((f,i) => (
-            <div className="iteration-box">
-            <img className={`iteration 
-              ${(f.iteration === state.playbackStatus.iteration) ? "playing" : ""}
-              ${(f.iteration === state.requestedIteration) ? "requested" : ""}
-              `} src="sitting.svg" style={{
-              gridArea: `iteration${Math.floor(i/3)}${i%3}`
-            }}
-              key={f.iteration}
-              onClick={() => {
-                dispatch({type: "requestIteration", iteration: f.iteration})
-                dispatchPlaybackRequest.current({
-                  type: "change-iteration",
-                  iteration: f.iteration
-                })
-
-              }
-              }>
-            </img>
-            </div>
+        <header className="header">
+          {GalleryNames.map(([description, gallery]) => (
+            <audio ref={audioElements[gallery]} preload="auto" controls src={`${Gallery[gallery]}.mp3`} className="begin" />
           ))}
-        
-        <br></br>
-        <pre>{JSON.stringify(state.playbackStatus, null, 2)}</pre>
-      <footer className="footer">
-        <pre>
-          {completed} of {total} files loaded.  
-          {" " + state.audioContextStatus}. 
-          Chazen ＆ cetera. 2020.
-        </pre>
+        </header>
+        {iterationList.map(([i, icon], c) => {
+          
+          const src = `icon-${Gallery[state.gallery]}-${String(c).padStart(2, '0')}.svg`
+          const gridArea = `iteration${Math.floor(c / 4)}${c % 4}`
+          const className = `iteration 
+                ${state.iteration === i ? "playing" : ""}
+                gallery-${state.gallery}
+              `;
+
+          return (
+          <img className={className} src={src} style={{ gridArea }}
+            key={c}
+            onClick={() => {
+              GalleryNames.filter(([desc,g]) => g!== state.gallery).forEach(([desc,g]) => 
+              {
+                console.log("For ", g, "!-", typeof state.gallery, "pausing");
+                audioElements[g].current!.pause()
+              })
+              audioElements[state.gallery].current!.play()
+              audioElements[state.gallery].current!.currentTime = ((audioElements[state.gallery].current!.currentTime - LOOKBACK_ON_SWITCH) % ITERATION_DURATION) + c * ITERATION_DURATION
+              dispatch({
+                type: "requestIteration",
+                iteration: i
+              })
+            }
+            }>
+          </img>
+        )}
+        )}
+        <footer className="footer">
+          <div className="gallery-selection">
+            {GalleryNames.map(([description, gallery]) => (
+              <button
+              key={gallery} 
+              onClick={() => {
+                dispatch({
+                  type: "requestGallery",
+                  gallery
+                })
+                const atTime = audioElements[state.gallery].current!.currentTime;
+                GalleryNames.forEach(([desc,g]) => 
+                {
+                  console.log("new galFor ", g, "!-", typeof state.gallery, "pausing");
+                  g !== gallery && audioElements[g].current!.pause()
+                })
+                  audioElements[gallery].current!.currentTime = atTime + .010;
+                  audioElements[gallery].current!.play()
+                console.log("Dine stet", atTime)
+              }}
+              className={`
+                ${state.gallery == gallery ? "selected" : "default"}
+                ${Gallery[state.gallery]}
+              `}>{description}</button>
+            ))}
+          </div>
+          Chazen et cetera. 2020.
         </footer>
-     </div> 
+      </div>
     </div>
   );
 };
