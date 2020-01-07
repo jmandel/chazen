@@ -15,7 +15,8 @@ export type ActionTypes =
   | { type: "pickIteration"; selectedIteration: number }
   | { type: "pickTime"; subtype: "a"; selectedTime: number }
   | { type: "downloadStatus"; progress: ItemProgress<AudioFragment>[] }
-  | { type: "playbackStatus"; status: PlaybackStatus }
+  | { type: "playbackStatus"; offset: number }
+  | { type: "dismissModal"; }
   | { type: "requestGallery"; gallery: Gallery }
   | { type: "requestIteration"; iteration: number }
   | { type: "rollOverToIteration"; iteration: number };

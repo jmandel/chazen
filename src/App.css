@@ -6,31 +6,42 @@ html, body, #root, .App, .wrapper {
 
 
 .iteration {
+  height: 100%;
   max-height: 100%;
-  width: auto;
   width:100%;
+  max-width: 100%;
   cursor: pointer;
   padding: 1vmin;
   box-sizing: border-box;
   background: white;
-  height: 100%;
-}
-
-.iteration {
-  transition: background .25s linear;
-}
-.iteration.playing {
-  background: black;
-}
-
-
-.iteration-box {
   position: relative;
 }
 
+.iteration img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.iteration div {
+  transition: width, height .1 linear;
+}
+
+.iteration.playing {
+  background: darkgrey;
+}
+
+
 .header, .footer {
   text-align: center;
-  font-size: 10px;
+  font-size: 2vmin;
+}
+
+.header {
+  grid-area: header;
+  font-weight: 500;
+  margin: 1vmin;
 }
 
 .header audio {
@@ -41,10 +52,34 @@ html, body, #root, .App, .wrapper {
   color: #09d3ac;
 }
 
+.modal {
+  display: grid;
+  position: absolute;
+  background: #22222299;
+  backdrop-filter: blur(.5vmin);
+  z-index: 1;
+  top: 0px;
+  height: 100%;
+  left: 0px;
+  width: 100%;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas: 
+    "modaltop modaltop modaltop" 
+    "modalleft modal modalright" 
+    "modalbottom modalbottom modalbottom" 
+}
+
+.modal-content {
+  grid-area: modal;
+  background: white;
+  padding: 5vmin;
+}
+
 .wrapper {
   display: grid;
   grid-gap: .2vmin;
-  grid-template-rows: 1em 1fr 1fr 1fr 1fr calc(20px + 20vmin);
+  grid-template-rows: 4vmin 1fr 1fr 1fr 1fr calc(20px + 30vmin);
   grid-template-columns: 15% 1fr 1fr 1fr 1fr 15% /*1fr*/;
   grid-template-areas: 
     "header header header header header header" 
@@ -69,7 +104,6 @@ html, body, #root, .App, .wrapper {
   grid-area: gutter;
 }
 
-
 .menu {
   background: lightgoldenrodyellow;
   height: 100%;
@@ -82,7 +116,7 @@ html, body, #root, .App, .wrapper {
   flex-direction: row;
   margin-bottom: 2.0em;
 }
-.gallery-selection button {
+button {
   font-family: 'Libre Franklin', sans-serif;
   font-size: 2em;
   padding: 1vmin;
@@ -96,6 +130,12 @@ html, body, #root, .App, .wrapper {
   max-height: 100%;
   top: 0px;
   height: 100%;
+}
+.start-button {
+  width: 100%;
+  color: #0095da;
+  border: 1px solid #0095da;
+  
 }
 .gallery-selection button.selected{
   background: white;
@@ -119,4 +159,12 @@ html, body, #root, .App, .wrapper {
 .gallery-selection button.selected.bridge {
   color: #75c043;
   border: 1px solid #75c043;
+}
+
+
+.iteration .show-borders {
+  display: inherit;
+}
+.iteration .no-show-borders {
+  display: none;
 }
