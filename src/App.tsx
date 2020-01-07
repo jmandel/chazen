@@ -53,6 +53,18 @@ const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
 const PARALLEL_DOWNLOADS = 3
 const PROGRESS_INTERVAL_MS = 50
 
+  const dialTo = (steps: number, duration: number) => (elt: HTMLAudioElement, target: number) => {
+    const increment = (target - elt.volume) / steps
+    const initial = elt.volume
+    for (let i=0; i < steps; i++) {
+      setTimeout(() => elt.volume = Math.max(0, initial + i * increment), i * (duration / steps))
+    }
+  }
+
+  const dialSoftly = dialTo(10, 200)
+
+
+
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(appStateReducer, defaultAppState);
 
@@ -110,6 +122,7 @@ const App: React.FC = () => {
     [15, "sitting.04.png"],
   ]
 
+
   // iteration_duration = 64.32s
   return (
     <div className="App">
@@ -125,7 +138,7 @@ const App: React.FC = () => {
           </div></div>}
 
       <div className="wrapper">
-        <header className="header"> I am standing in a museum... {false && Math.round(state.offset*100, 2)}
+        <header className="header"> I am standing in a museum... {false && Math.round(state.offset*100)/100}
           {GalleryNames.map(([description, gallery]) => (
             <audio key={gallery} ref={audioElements[gallery]} loop={true} preload="auto" controls src={`${Gallery[gallery]}.mp3`} className="begin" />
           ))}
@@ -206,12 +219,11 @@ const App: React.FC = () => {
                 const atTime = audioElements[state.gallery].current!.currentTime;
                 GalleryNames.forEach(([desc,g]) => 
                 {
-                  console.log("new galFor ", g, "!-", typeof state.gallery, "pausing");
-                  g !== gallery && audioElements[g].current!.pause()
+                  g !== gallery && dialSoftly(audioElements[g].current!, 0)
                 })
-                  audioElements[gallery].current!.currentTime = atTime + .010;
+                  audioElements[gallery].current!.currentTime = atTime
                   audioElements[gallery].current!.play()
-                console.log("Dine stet", atTime)
+                  dialSoftly(audioElements[gallery].current!, 1)
               }}
               className={`
                 ${state.gallery === gallery ? "selected" : "default"}
