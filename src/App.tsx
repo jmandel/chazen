@@ -54,14 +54,14 @@ const PARALLEL_DOWNLOADS = 3
 const PROGRESS_INTERVAL_MS = 50
 
   const dialTo = (steps: number, duration: number) => (elt: HTMLAudioElement, target: number) => {
-    const increment = (target - elt.volume) / steps
     const initial = elt.volume
+    const increment = (target - initial) / steps
     for (let i=0; i < steps; i++) {
-      setTimeout(() => elt.volume = Math.max(0, initial + i * increment), i * (duration / steps))
+      setTimeout(() => elt.volume = Math.min(1, Math.max(0, initial + (i+1) * increment)) , i* duration / steps)
     }
   }
 
-  const dialSoftly = dialTo(10, 200)
+  const dialSoftly = dialTo(10, 250)
 
 
 
@@ -86,7 +86,6 @@ const App: React.FC = () => {
       const previousIteration = state.iteration
       const currentIteration = Math.floor(offset/ITERATION_DURATION)
       if (previousIteration !== currentIteration){
-        console.log("Rollover to iteration", previousIteration, currentIteration)
         dispatch({
           type: "rollOverToIteration",
           iteration: currentIteration
@@ -100,28 +99,8 @@ const App: React.FC = () => {
   const ITERATION_DURATION = 64.32 // 76;
   const LOOKBACK_ON_SWITCH = 0;
 
-
   const fractionComplete = (state.offset % ITERATION_DURATION) / ITERATION_DURATION
-
-  const iterationList: [number, string][] = [
-    [0, "sitting.01.png"],
-    [1, "sitting.02.png"],
-    [2, "sitting.03.png"],
-    [3, "sitting.04.png"],
-    [4, "sitting.01.png"],
-    [5, "sitting.02.png"],
-    [6, "sitting.03.png"],
-    [7, "sitting.04.png"],
-    [8, "sitting.01.png"],
-    [9, "sitting.02.png"],
-    [10, "sitting.03.png"],
-    [11, "sitting.04.png"],
-    [12, "sitting.01.png"],
-    [13, "sitting.02.png"],
-    [14, "sitting.03.png"],
-    [15, "sitting.04.png"],
-  ]
-
+  const iterationList: number[] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 
   // iteration_duration = 64.32s
   return (
@@ -145,7 +124,7 @@ const App: React.FC = () => {
         </header>
         <div className="menu"></div>
         <div className="gutter"></div>
-        {iterationList.map(([i, icon], c) => {
+        {iterationList.map((i, c) => {
           
           const src = `icon-${Gallery[state.gallery]}-${String(c).padStart(2, '0')}.svg`
           const gridArea = `iteration${Math.floor(c / 4)}${c % 4}`

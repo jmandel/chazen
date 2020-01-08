@@ -74,12 +74,13 @@ html, body, #root, .App, .wrapper {
   grid-area: modal;
   background: white;
   padding: 5vmin;
+  display: flex;
 }
 
 .wrapper {
   display: grid;
   grid-gap: .2vmin;
-  grid-template-rows: 4vmin 1fr 1fr 1fr 1fr calc(20px + 30vmin);
+  grid-template-rows: 4vmin 1fr 1fr 1fr 1fr .5fr;
   grid-template-columns: 15% 1fr 1fr 1fr 1fr 15% /*1fr*/;
   grid-template-areas: 
     "header header header header header header" 
@@ -99,22 +100,20 @@ html, body, #root, .App, .wrapper {
 }
 
 .gutter {
-  background: lightsalmon;
   height: 100%;
   grid-area: gutter;
 }
 
 .menu {
-  background: lightgoldenrodyellow;
   height: 100%;
   grid-area: menu;
 }
 
 .gallery-selection {
-  height: 80%;
   display: flex;
   flex-direction: row;
-  margin-bottom: 2.0em;
+  justify-content: center;
+  margin-bottom: 2vmin;
 }
 button {
   font-family: 'Libre Franklin', sans-serif;
@@ -129,7 +128,6 @@ button {
   display: inline-block;
   max-height: 100%;
   top: 0px;
-  height: 100%;
 }
 .start-button {
   width: 100%;
