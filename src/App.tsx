@@ -55,9 +55,16 @@ const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
 const PARALLEL_DOWNLOADS = 3
 const PROGRESS_INTERVAL_MS = 50
 
-const dialTo = (duration: number, target: number, gainNode: GainNode) => {
-  log(`Ramping ${duration}, ${target} ${gainNode}`)
-  gainNode.gain.setTargetAtTime(target, audioContext.currentTime, duration / 1000 / 3);
+const dialTo = (duration: number, target: number, audio: HTMLAudioElement) => {
+  if (target == 0) {
+    audio.pause()
+    log("Audio pause")
+  } else {
+    audio.play()
+    log("Audio play")
+  }
+  //log(`Ramping ${duration}, ${target} ${gainNode}`)
+  //kgainNode.gain.setTargetAtTime(target, audioContext.currentTime, duration / 1000 / 3);
   //gainNode.gain.value = target;
 }
 
@@ -100,14 +107,14 @@ const useGainedNode = () => {
   const [gain, setGain] = useState<GainNode | null>(null);
   const [node, setNode] = useState<HTMLAudioElement>();
   const ref = useCallback((audioNode: HTMLAudioElement) => {
-    log(`GAining audio node ${audioNode}`);
-    const source = audioContext.createMediaElementSource(audioNode);
-    const gain = audioContext.createGain();
-    source.connect(gain);
-    gain.connect(audioContext.destination);
-    log(`connected audio node ${gain}`);
-    log(`with gain value  ${gain.gain.value}`);
-    setGain(gain)
+    //log(`GAining audio node ${audioNode}`);
+    //const source = audioContext.createMediaElementSource(audioNode);
+    //const gain = audioContext.createGain();
+    //source.connect(gain);
+    //gain.connect(audioContext.destination);
+    //log(`connected audio node ${gain}`);
+    //log(`with gain value  ${gain.gain.value}`);
+    //setGain(gain)
     setNode(audioNode)
   }, [])
   return [ref, gain, node] as const
@@ -199,11 +206,16 @@ const App: React.FC = () => {
               log(`AC status: ${audioContext.state}`)
               const currentAudio = getAudioElement(audioElements[state.gallery])
               if (currentAudio) {
+                     GalleryNames.forEach(([desc, g]) => {
+                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[g][2]!)
+                      dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
+                    })
+ 
                 currentAudio.play()
-                audioContext.resume().then(() => {
-                  log(`played then AC status: ${audioContext.state}`)
+                //audioContext.resume().then(() => {
+                  log(`played then unused AC status: ${audioContext.state}`)
                   dispatch({ type: "dismissModal" })
-                })
+                //})
               }
             }}
           >Begin</button>
@@ -263,18 +275,21 @@ const App: React.FC = () => {
                   const currentAudio = getAudioElement(audioElements[state.gallery]);
                   if (currentAudio) {
                     const atTime = currentAudio.currentTime;
-                    console.log("Requeste gal at", atTime)
+                    log("Requeste gal at " + atTime)
                     const nextAudio = getAudioElement(audioElements[gallery])!;
-                    nextAudio.currentTime = atTime
                     nextAudio.play()
+                    nextAudio.currentTime = atTime
                     GalleryNames.forEach(([desc, g]) => {
-                      g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][1]!)
+                      g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
                     })
-                    dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][1]!)
+                    dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
 
+                    setTimeout(() => {
                     dispatch({
                       type: "requestGallery",
                       gallery
+                    })
+
                     })
                   }
                 }}
