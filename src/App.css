@@ -4,6 +4,10 @@ html, body, #root, .App, .wrapper {
 
 }
 
+#log {
+  z-index: 1;
+  width: 100%;
+}
 
 .iteration {
   height: 100%;
@@ -157,12 +161,4 @@ button {
 .gallery-selection button.selected.bridge {
   color: #75c043;
   border: 1px solid #75c043;
-}
-
-
-.iteration .show-borders {
-  display: inherit;
-}
-.iteration .no-show-borders {
-  display: none;
 }
