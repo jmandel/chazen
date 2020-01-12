@@ -71,8 +71,8 @@ html, body, #root, .App, .wrapper {
   height: 100%;
   left: 0px;
   width: 100%;
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 25vmin 1fr;
+  grid-template-columns: 1fr 50vmin 1fr;
   grid-template-areas: 
     "modaltop modaltop modaltop" 
     "modalleft modal modalright" 
@@ -81,7 +81,6 @@ html, body, #root, .App, .wrapper {
 
 .modal-content {
   grid-area: modal;
-  //background: white;
   padding: 5vmin;
   display: flex;
 }
@@ -89,8 +88,8 @@ html, body, #root, .App, .wrapper {
 .wrapper {
   display: grid;
   grid-gap: 0px;
-  grid-template-rows: 4vmin 1fr 1fr 1fr 1fr .5fr;
-  grid-template-columns: 15% 1fr 1fr 1fr 1fr 15% /*1fr*/;
+  grid-template-rows: 1fr 20vmin 20vmin 20vmin 20vmin 1fr;
+  grid-template-columns: .5fr 20vmin 20vmin 20vmin 20vmin .5fr;
   grid-template-areas: 
     "header header header header header header" 
     "gutter iteration00 iteration01 iteration02 iteration03 menu"
@@ -122,13 +121,13 @@ html, body, #root, .App, .wrapper {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-bottom: 2vmin;
+  margin-top: 0vmin;
 }
 button {
   font-family: 'Libre Franklin', sans-serif;
-  font-size: 2vw;
+  font-size: 2vmin;
   padding: 1vmin;
-  margin: 1vmin;
+  margin: .5vmin;
   cursor: pointer;
   width:  23%;
   color: #a9a3a1;
@@ -137,11 +136,13 @@ button {
   display: inline-block;
   max-height: 100%;
   top: 0px;
+  border-radius: 1vmin;
 }
 .start-button {
   width: 100%;
   color: black;
   border: 1px solid black;
+  font-size: 3vmin;
   
 }
 .gallery-selection button.selected{

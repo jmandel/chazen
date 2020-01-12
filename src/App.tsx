@@ -70,9 +70,9 @@ const dialTo = (duration: number, target: number, audio: HTMLAudioElement) => {
 
 
 const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number }> = (({ x, y, fractionComplete }) => {
-  let totalPerimeter = 2*x + 2*y - 40;
+  let totalPerimeter = 2 * x + 2 * y - 40;
   let remainingPerimeter = fractionComplete * totalPerimeter;
-  let pixels = [x-10, y-10, x-10, y-10];
+  let pixels = [x - 10, y - 10, x - 10, y - 10];
 
   console.log(`x,y: ${x}, ${y}`)
   console.log(`total perimeter: ${totalPerimeter}`)
@@ -83,7 +83,7 @@ const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number 
     remainingPerimeter -= p
   })
   console.log("pixel lengths: ", pixels);
-  
+
   const progressBorder = "10px solid #bbbbbb"
   return <>
     <div key="0" style={{
@@ -115,7 +115,7 @@ const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number 
       borderLeft: progressBorder
     }}></div>
   </>
-  }
+}
 )
 
 const useGainedNode = () => {
@@ -123,17 +123,9 @@ const useGainedNode = () => {
   const [gain, setGain] = useState<GainNode | null>(null);
   const [node, setNode] = useState<HTMLAudioElement>();
   const ref = useCallback((audioNode: HTMLAudioElement) => {
-    //log(`GAining audio node ${audioNode}`);
-    //const source = audioContext.createMediaElementSource(audioNode);
-    //const gain = audioContext.createGain();
-    //source.connect(gain);
-    //gain.connect(audioContext.destination);
-    //log(`connected audio node ${gain}`);
-    //log(`with gain value  ${gain.gain.value}`);
-    //setGain(gain)
     setNode(audioNode)
   }, [])
-  return [ref, gain, node] as const
+  return [ref, gain, node] as const 
 }
 
 const getAudioElement = (ref: any) => {
@@ -156,7 +148,6 @@ window.addEventListener("error", function (e) {
 })
 
 log("LOG")
-
 console.log("ACState", audioContext.state)
 
 const App: React.FC = () => {
@@ -196,10 +187,6 @@ const App: React.FC = () => {
             iteration: currentIteration
           })
         }
-
-      }
-      else {
-        console.log("Waiting for curfnet audio.")
       }
     }, PROGRESS_INTERVAL_MS)
 
@@ -213,7 +200,7 @@ const App: React.FC = () => {
   const fractionComplete = (state.offset % ITERATION_DURATION) / ITERATION_DURATION * 1
   const iterationList: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
-  let domRect = spanRef.current ? spanRef.current.getBoundingClientRect() : {width: 100, height: 100}
+  let domRect = spanRef.current ? spanRef.current.getBoundingClientRect() : { width: 100, height: 100 }
   let x = domRect.width;
   let y = domRect.height;
 
@@ -225,18 +212,16 @@ const App: React.FC = () => {
           <button
             className="button start-button"
             onClick={() => {
-              log(`AC status: ${audioContext.state}`)
               const currentAudio = getAudioElement(audioElements[state.gallery])
               if (currentAudio) {
-                     GalleryNames.forEach(([desc, g]) => {
-                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[g][2]!)
-                      dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
-                    })
- 
+                GalleryNames.forEach(([desc, g]) => {
+                  dialTo(VOLUME_RAMP_TIME, 1, audioElements[g][2]!)
+                  dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
+                })
+
                 currentAudio.play()
                 //audioContext.resume().then(() => {
-                  log(`played then unused AC status: ${audioContext.state}`)
-                  dispatch({ type: "dismissModal" })
+                dispatch({ type: "dismissModal" })
                 //})
               }
             }}
@@ -244,7 +229,7 @@ const App: React.FC = () => {
         </div></div>}
 
       <div className="wrapper">
-        <header className="header"> 
+        <header className="header">
           {GalleryNames.map(([description, gallery]) => (
             <audio key={gallery}
               ref={audioElements[gallery][0]}
@@ -307,11 +292,10 @@ const App: React.FC = () => {
                     dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
 
                     setTimeout(() => {
-                    dispatch({
-                      type: "requestGallery",
-                      gallery
-                    })
-
+                      dispatch({
+                        type: "requestGallery",
+                        gallery
+                      })
                     })
                   }
                 }}
