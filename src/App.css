@@ -1,6 +1,7 @@
 html, body, #root, .App, .wrapper {
   height: 100%;
   max-height: 100%;
+  background: #eeeeee;
 
 }
 
@@ -16,7 +17,7 @@ html, body, #root, .App, .wrapper {
   width:100%;
   max-width: 100%;
   cursor: pointer;
-  padding: 1vmin;
+  padding: 0px;
   box-sizing: border-box;
   background: white;
   position: relative;
@@ -27,6 +28,8 @@ html, body, #root, .App, .wrapper {
   height: 100%;
   max-width: 100%;
   max-height: 100%;
+  border: 10px solid #eeeeee;
+  box-sizing: border-box;
 }
 
 .iteration div {
@@ -34,10 +37,11 @@ html, body, #root, .App, .wrapper {
 }
 
 .iteration.playing {
-  background: darkgrey;
 }
 
-
+.iteration.playing img {
+  border: 10px solid #dddddd;
+}
 .header, .footer {
   text-align: center;
   font-size: 2vmin;
@@ -77,14 +81,14 @@ html, body, #root, .App, .wrapper {
 
 .modal-content {
   grid-area: modal;
-  background: white;
+  //background: white;
   padding: 5vmin;
   display: flex;
 }
 
 .wrapper {
   display: grid;
-  grid-gap: .2vmin;
+  grid-gap: 0px;
   grid-template-rows: 4vmin 1fr 1fr 1fr 1fr .5fr;
   grid-template-columns: 15% 1fr 1fr 1fr 1fr 15% /*1fr*/;
   grid-template-areas: 
@@ -122,7 +126,7 @@ html, body, #root, .App, .wrapper {
 }
 button {
   font-family: 'Libre Franklin', sans-serif;
-  font-size: 2em;
+  font-size: 2vw;
   padding: 1vmin;
   margin: 1vmin;
   cursor: pointer;
@@ -136,8 +140,8 @@ button {
 }
 .start-button {
   width: 100%;
-  color: #0095da;
-  border: 1px solid #0095da;
+  color: black;
+  border: 1px solid black;
   
 }
 .gallery-selection button.selected{

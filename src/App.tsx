@@ -69,37 +69,53 @@ const dialTo = (duration: number, target: number, audio: HTMLAudioElement) => {
 }
 
 
-const BorderProgress: React.FC<{ fractionComplete: number }> = ({ fractionComplete }) => (
-  <>
+const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number }> = (({ x, y, fractionComplete }) => {
+  let totalPerimeter = 2*x + 2*y - 40;
+  let remainingPerimeter = fractionComplete * totalPerimeter;
+  let pixels = [x-10, y-10, x-10, y-10];
+
+  console.log(`x,y: ${x}, ${y}`)
+  console.log(`total perimeter: ${totalPerimeter}`)
+  pixels.forEach((p, i) => {
+    if (remainingPerimeter < p) {
+      pixels[i] = p = Math.min(p, remainingPerimeter)
+    }
+    remainingPerimeter -= p
+  })
+  console.log("pixel lengths: ", pixels);
+  
+  const progressBorder = "10px solid #bbbbbb"
+  return <>
     <div key="0" style={{
       position: "absolute",
       top: 0,
-      left: 0,
-      width: fractionComplete < .25 ? `${(fractionComplete - 0) * 4 * 100}%` : "100%",
-      borderTop: "1vmin solid black"
+      left: 10,
+      width: `${pixels[0]}px`,
+      borderTop: progressBorder
     }}></div>
     <div key="1" style={{
       position: "absolute",
       right: 0,
-      top: 0,
-      height: fractionComplete < .5 ? `${(fractionComplete - .25) * 4 * 100}%` : "100%",
-      borderRight: "1vmin solid black"
+      top: 10,
+      height: `${pixels[1]}px`,
+      borderRight: progressBorder
     }}></div>
     <div key="2" style={{
       position: "absolute",
       bottom: 0,
-      right: 0,
-      width: fractionComplete < .75 ? `${(fractionComplete - .50) * 4 * 100}%` : "100%",
-      borderBottom: "1vmin solid black"
+      right: 10,
+      width: `${pixels[2]}px`,
+      borderBottom: progressBorder
     }}></div>
     <div key="3" style={{
       position: "absolute",
       left: 0,
-      bottom: 0,
-      height: fractionComplete < 1.0 ? `${(fractionComplete - .75) * 4 * 100}%` : "100%",
-      borderLeft: "1vmin solid black"
+      bottom: 10,
+      height: `${pixels[3]}px`,
+      borderLeft: progressBorder
     }}></div>
   </>
+  }
 )
 
 const useGainedNode = () => {
@@ -145,6 +161,8 @@ console.log("ACState", audioContext.state)
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(appStateReducer, defaultAppState);
+
+  const spanRef = useRef<HTMLElement>(null);
 
   const audioElements: Record<Gallery, readonly [Ref<HTMLAudioElement>, GainNode | null, HTMLAudioElement | undefined]> = {
     [Gallery.study]: useGainedNode(),
@@ -192,8 +210,12 @@ const App: React.FC = () => {
   const LOOKBACK_ON_SWITCH = 0;
   const VOLUME_RAMP_TIME = 500;
 
-  const fractionComplete = (state.offset % ITERATION_DURATION) / ITERATION_DURATION
+  const fractionComplete = (state.offset % ITERATION_DURATION) / ITERATION_DURATION * 1
   const iterationList: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+
+  let domRect = spanRef.current ? spanRef.current.getBoundingClientRect() : {width: 100, height: 100}
+  let x = domRect.width;
+  let y = domRect.height;
 
   // iteration_duration = 64.32s
   return (
@@ -222,7 +244,7 @@ const App: React.FC = () => {
         </div></div>}
 
       <div className="wrapper">
-        <header className="header"> I am standing in a museum... {false && Math.round(state.offset * 100) / 100}
+        <header className="header"> 
           {GalleryNames.map(([description, gallery]) => (
             <audio key={gallery}
               ref={audioElements[gallery][0]}
@@ -245,8 +267,8 @@ const App: React.FC = () => {
               `;
 
           return (
-            <span key={c} className={className} style={{ gridArea }}>
-              {i === state.iteration && <BorderProgress fractionComplete={fractionComplete}></BorderProgress>}
+            <span ref={c == 0 ? spanRef : null} key={c} className={className} style={{ gridArea }}>
+              {i === state.iteration && <BorderProgress x={x} y={y} fractionComplete={fractionComplete}></BorderProgress>}
               <img src={src}
                 onClick={() => {
                   const currentAudio = getAudioElement(audioElements[state.gallery]);
@@ -300,7 +322,9 @@ const App: React.FC = () => {
             ))}
           </div>
           <div>
-            Chazen et cetera. 2020.
+            {
+              //Chazen et cetera. 2020.
+            }
           </div>
         </footer>
       </div>

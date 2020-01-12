@@ -46,3 +46,8 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ## Build and deploy
 
     npm run-script build && ./node_modules/.bin/gh-pages -d build
+
+## Fix SVGs
+
+    sed -i.bak  's/><!--/preserveAspectRatio="none;" ><!--/g' public/*.svg
+
