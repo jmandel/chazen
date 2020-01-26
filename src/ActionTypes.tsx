@@ -19,4 +19,5 @@ export type ActionTypes =
   | { type: "dismissModal"; }
   | { type: "requestGallery"; gallery: Gallery }
   | { type: "requestIteration"; iteration: number }
-  | { type: "rollOverToIteration"; iteration: number};
+  | { type: "debug"; debugStatus: number }
+  ;

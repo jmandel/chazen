@@ -24,6 +24,7 @@ type AppState = {
   gallery: Gallery;
   modal?: Modal;
   offset: number;
+  debug?: number;
 };
 
 const defaultAppState: AppState = {
@@ -35,18 +36,18 @@ const defaultAppState: AppState = {
 
 const appStateReducer = (state: AppState, action: ActionTypes): AppState => {
   if (action.type !== "playbackStatus")
-    console.log(action)
+    console.log(state, action)
   switch (action.type) {
     case "requestGallery":
       return { ...state, gallery: action.gallery };
     case "requestIteration":
       return { ...state, iteration: action.iteration || 0 };
-    case "rollOverToIteration":
-      return { ...state, iteration: action.iteration || 0 };
     case "playbackStatus":
       return { ...state, offset: action.offset };
     case "dismissModal":
       return { ...state, modal: undefined };
+    case "debug":
+      return {...state, debug: (state.debug || 0) + action.debugStatus}
     default:
       return state;
   }
@@ -170,30 +171,33 @@ const App: React.FC = () => {
         const previousIteration = state.iteration
         const currentIteration = Math.floor(offset / ITERATION_DURATION)
         if (previousIteration !== currentIteration) {
-         console.log("Rollover iteration", state.gallery, previousIteration, currentIteration)
-         dispatch({
-            type: "rollOverToIteration",
+          console.log("Rollover iteration", state.gallery, previousIteration, currentIteration)
+          dispatch({
+            type: "requestIteration",
             iteration: currentIteration
           })
-          
-          if (currentIteration == 0) {
-            setTimeout(() => clickGallery(defaultGallery), 1000)
-          }
-        } 
 
+          if (currentIteration == 0) {
+            //setTimeout(() => clickGallery(defaultGallery), 0)
+            clickGallery(defaultGallery)
+          }
+        }
+
+        dispatch({
+          type: "playbackStatus",
+          offset
+        })
+        
+        console.log("Now state after iterat", state)
 
         
-          dispatch({
-            type: "playbackStatus",
-            offset
-          })
       }
     }, PROGRESS_INTERVAL_MS)
 
     return () => {
       console.log("Clear interval", destroy, state.gallery, state.iteration)
       clearInterval(destroy)
-   }
+    }
   }, [state.gallery, state.iteration, audioElements[state.gallery][2]])
 
   const ITERATION_DURATION = 64.32 // 76;
@@ -208,26 +212,24 @@ const App: React.FC = () => {
   let y = domRect.height;
 
   const clickGallery = (gallery: Gallery) => {
-                    const currentAudio = getAudioElement(audioElements[state.gallery]);
-                    if (currentAudio) {
-                      const atTime = currentAudio.currentTime;
-                      log("Requeste gal at " + atTime)
-                      const nextAudio = getAudioElement(audioElements[gallery])!;
-                      nextAudio.play()
-                      nextAudio.currentTime = atTime
-                      GalleryNames.forEach(([desc, g]) => {
-                        g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
-                      })
-                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
+    const currentAudio = getAudioElement(audioElements[state.gallery]);
+    if (currentAudio) {
+      const atTime = currentAudio.currentTime;
+      log("Requeste gal at " + atTime)
+      const nextAudio = getAudioElement(audioElements[gallery])!;
+      nextAudio.play()
+      nextAudio.currentTime = atTime
+      GalleryNames.forEach(([desc, g]) => {
+        g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
+      })
+      dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
 
-                      setTimeout(() => {
-                        dispatch({
-                          type: "requestGallery",
-                          gallery
-                        })
-                      })
-                    }
-                  }
+      dispatch({
+        type: "requestGallery",
+        gallery
+      })
+    }
+  }
   // iteration_duration = 64.32s
   return (
     <div className="App">
