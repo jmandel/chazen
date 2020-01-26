@@ -161,8 +161,6 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("New effect and interval", state.gallery, state.iteration)
-
     let destroy = setInterval(() => {
       const currentAudio = getAudioElement(audioElements[state.gallery])
       if (currentAudio) {
@@ -178,7 +176,6 @@ const App: React.FC = () => {
           })
 
           if (currentIteration == 0) {
-            //setTimeout(() => clickGallery(defaultGallery), 0)
             clickGallery(defaultGallery)
           }
         }
@@ -187,15 +184,10 @@ const App: React.FC = () => {
           type: "playbackStatus",
           offset
         })
-        
-        console.log("Now state after iterat", state)
-
-        
       }
     }, PROGRESS_INTERVAL_MS)
 
     return () => {
-      console.log("Clear interval", destroy, state.gallery, state.iteration)
       clearInterval(destroy)
     }
   }, [state.gallery, state.iteration, audioElements[state.gallery][2]])
