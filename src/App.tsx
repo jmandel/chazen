@@ -74,8 +74,6 @@ const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number 
   let remainingPerimeter = fractionComplete * totalPerimeter;
   let pixels = [x - 10, y - 10, x - 10, y - 10];
 
-  console.log(`x,y: ${x}, ${y}`)
-  console.log(`total perimeter: ${totalPerimeter}`)
   pixels.forEach((p, i) => {
     if (remainingPerimeter < p) {
       pixels[i] = p = Math.min(p, remainingPerimeter)
@@ -162,34 +160,40 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    log(`redo effect noAe ${audioElements[state.gallery][2]}`)
-    if (audioElements[state.gallery][2]) {
-      log(`t = ${audioElements[state.gallery][2]!.src}`)
-    }
+    console.log("New effect and interval", state.gallery, state.iteration)
 
     let destroy = setInterval(() => {
       const currentAudio = getAudioElement(audioElements[state.gallery])
       if (currentAudio) {
 
         const offset = currentAudio.currentTime
-        dispatch({
-          type: "playbackStatus",
-          offset
-        })
-
         const previousIteration = state.iteration
         const currentIteration = Math.floor(offset / ITERATION_DURATION)
         if (previousIteration !== currentIteration) {
-          console.log("Rollover iteration")
-          dispatch({
+         console.log("Rollover iteration", state.gallery, previousIteration, currentIteration)
+         dispatch({
             type: "rollOverToIteration",
             iteration: currentIteration
           })
-        }
+          
+          if (currentIteration == 0) {
+            setTimeout(() => clickGallery(defaultGallery), 1000)
+          }
+        } 
+
+
+        
+          dispatch({
+            type: "playbackStatus",
+            offset
+          })
       }
     }, PROGRESS_INTERVAL_MS)
 
-    return () => clearInterval(destroy)
+    return () => {
+      console.log("Clear interval", destroy, state.gallery, state.iteration)
+      clearInterval(destroy)
+   }
   }, [state.gallery, state.iteration, audioElements[state.gallery][2]])
 
   const ITERATION_DURATION = 64.32 // 76;
@@ -203,6 +207,27 @@ const App: React.FC = () => {
   let x = domRect.width;
   let y = domRect.height;
 
+  const clickGallery = (gallery: Gallery) => {
+                    const currentAudio = getAudioElement(audioElements[state.gallery]);
+                    if (currentAudio) {
+                      const atTime = currentAudio.currentTime;
+                      log("Requeste gal at " + atTime)
+                      const nextAudio = getAudioElement(audioElements[gallery])!;
+                      nextAudio.play()
+                      nextAudio.currentTime = atTime
+                      GalleryNames.forEach(([desc, g]) => {
+                        g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
+                      })
+                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
+
+                      setTimeout(() => {
+                        dispatch({
+                          type: "requestGallery",
+                          gallery
+                        })
+                      })
+                    }
+                  }
   // iteration_duration = 64.32s
   return (
     <div className="App">
@@ -278,27 +303,7 @@ const App: React.FC = () => {
               <div className="button-wrapper">
                 <button
                   key={gallery}
-                  onClick={() => {
-                    const currentAudio = getAudioElement(audioElements[state.gallery]);
-                    if (currentAudio) {
-                      const atTime = currentAudio.currentTime;
-                      log("Requeste gal at " + atTime)
-                      const nextAudio = getAudioElement(audioElements[gallery])!;
-                      nextAudio.play()
-                      nextAudio.currentTime = atTime
-                      GalleryNames.forEach(([desc, g]) => {
-                        g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
-                      })
-                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
-
-                      setTimeout(() => {
-                        dispatch({
-                          type: "requestGallery",
-                          gallery
-                        })
-                      })
-                    }
-                  }}
+                  onClick={() => clickGallery(gallery)}
                   className={`
                 ${state.gallery === gallery ? "selected" : "default"}
                 ${Gallery[state.gallery]}
