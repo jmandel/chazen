@@ -17,7 +17,7 @@ const GalleryNames: [string, Gallery][] = [
 const defaultGalleryParam = window.location.hash.slice(1);
 
 const defaultGallery: Gallery = Object.keys(Gallery).includes(defaultGalleryParam) ?
-  (Gallery as any)[defaultGalleryParam] : Gallery.niche;
+  (Gallery as any)[defaultGalleryParam] : Gallery.study;
 
 type AppState = {
   iteration: number;
@@ -82,7 +82,6 @@ const BorderProgress: React.FC<{ fractionComplete: number, x: number, y: number 
     }
     remainingPerimeter -= p
   })
-  console.log("pixel lengths: ", pixels);
 
   const progressBorder = "10px solid #bbbbbb"
   return <>
@@ -125,7 +124,7 @@ const useGainedNode = () => {
   const ref = useCallback((audioNode: HTMLAudioElement) => {
     setNode(audioNode)
   }, [])
-  return [ref, gain, node] as const 
+  return [ref, gain, node] as const
 }
 
 const getAudioElement = (ref: any) => {
@@ -276,33 +275,39 @@ const App: React.FC = () => {
         <footer className="footer">
           <div className="gallery-selection">
             {GalleryNames.map(([description, gallery]) => (
-              <button
-                key={gallery}
-                onClick={() => {
-                  const currentAudio = getAudioElement(audioElements[state.gallery]);
-                  if (currentAudio) {
-                    const atTime = currentAudio.currentTime;
-                    log("Requeste gal at " + atTime)
-                    const nextAudio = getAudioElement(audioElements[gallery])!;
-                    nextAudio.play()
-                    nextAudio.currentTime = atTime
-                    GalleryNames.forEach(([desc, g]) => {
-                      g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
-                    })
-                    dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
-
-                    setTimeout(() => {
-                      dispatch({
-                        type: "requestGallery",
-                        gallery
+              <div className="button-wrapper">
+                <button
+                  key={gallery}
+                  onClick={() => {
+                    const currentAudio = getAudioElement(audioElements[state.gallery]);
+                    if (currentAudio) {
+                      const atTime = currentAudio.currentTime;
+                      log("Requeste gal at " + atTime)
+                      const nextAudio = getAudioElement(audioElements[gallery])!;
+                      nextAudio.play()
+                      nextAudio.currentTime = atTime
+                      GalleryNames.forEach(([desc, g]) => {
+                        g !== gallery && dialTo(VOLUME_RAMP_TIME, 0, audioElements[g][2]!)
                       })
-                    })
-                  }
-                }}
-                className={`
+                      dialTo(VOLUME_RAMP_TIME, 1, audioElements[gallery][2]!)
+
+                      setTimeout(() => {
+                        dispatch({
+                          type: "requestGallery",
+                          gallery
+                        })
+                      })
+                    }
+                  }}
+                  className={`
                 ${state.gallery === gallery ? "selected" : "default"}
                 ${Gallery[state.gallery]}
               `}>{description}</button>
+                {gallery === defaultGallery && <span className="youarehere">
+                  YOU ARE HERE
+                </span>
+                }
+              </div>
             ))}
           </div>
           <div>
@@ -317,3 +322,327 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

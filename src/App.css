@@ -123,13 +123,23 @@ html, body, #root, .App, .wrapper {
   justify-content: center;
   margin-top: 0vmin;
 }
+
+.gallery-selection div.button-wrapper {
+  width:  23%;
+  margin: .5vmin;
+}
+
+.gallery-selection div.button-wrapper span.youarehere {
+  margin-top: 1vmin;
+  display: inline-block;
+}
+
 button {
+  width: 100%;
   font-family: 'Libre Franklin', sans-serif;
   font-size: 2vmin;
-  padding: 1vmin;
-  margin: .5vmin;
   cursor: pointer;
-  width:  23%;
+  padding: 1vmin;
   color: #a9a3a1;
   border: 1px solid #a9a3a1;
   background: #f7f6f5;
