@@ -11,13 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Setup Hugo
-      uses: peaceiris/actions-hugo@v2
-      with:
-        hugo-version: '0.59.1'
-
     - name: Build
-      run: npm ci && npm run-script build
+      run: npm install && npm run-script build
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v2
