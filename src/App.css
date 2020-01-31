@@ -160,21 +160,21 @@ button {
 }
 
 .gallery-selection button.selected.court {
-  color: #b41e8e;
-  border: 1px solid #b41e8e;
+  color: #d11d41;
+  border: 1px solid #d11d41;
 }
 
 .gallery-selection button.selected.study {
-  color: #0095da;
-  border: 1px solid #0095da;
+  color: #800080;
+  border: 1px solid #800080;
 }
 
 .gallery-selection button.selected.niche {
-  color: #eca021;
-  border: 1px solid #eca021;
+  color: #ed6821;
+  border: 1px solid #ed6821;
 }
 
 .gallery-selection button.selected.bridge {
-  color: #75c043;
-  border: 1px solid #75c043;
+  color: #eca021;
+  border: 1px solid #eca021;
 }
