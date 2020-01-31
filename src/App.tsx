@@ -192,7 +192,7 @@ const App: React.FC = () => {
     }
   }, [state.gallery, state.iteration, audioElements[state.gallery][2]])
 
-  const ITERATION_DURATION = 64.32 // 76;
+  const ITERATION_DURATION = 60 // 64.32 // 76;
   const LOOKBACK_ON_SWITCH = 0;
   const VOLUME_RAMP_TIME = 500;
 
